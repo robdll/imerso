@@ -4,6 +4,7 @@ import { Footer } from "@/components/layout/Footer";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { NumbersSection } from "@/components/sections/NumbersSection";
 import { HowItWorksSection } from "@/components/sections/HowItWorksSection";
+import { ServicesSection } from "@/components/sections/ServicesSection";
 import { FeaturesSection } from "@/components/sections/FeaturesSection";
 import { ContactSection } from "@/components/sections/ContactSection";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
@@ -19,7 +20,10 @@ export default function Home() {
       
       <HowItWorksSection />
 
+
       <FeaturesSection />
+      
+      <ServicesSection />
       
       <ContactSection />
       
