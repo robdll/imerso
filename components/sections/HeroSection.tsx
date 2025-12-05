@@ -29,7 +29,7 @@ export const HeroSection = () => {
             </span>
           </h1>
           
-          <p className="text-xl text-slate-400 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+          <p className="text-xl text-[#b0b0d0] max-w-2xl mx-auto lg:mx-0 leading-relaxed">
             Transforme Seus Espaços em Experiências Virtuais Imersiva
           </p>
           
