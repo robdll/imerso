@@ -10,7 +10,7 @@ export const WhatsAppButton = () => {
       href="https://wa.me/5577999999999" // Placeholder number
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-6 right-6 z-50 bg-green-500 text-white p-4 rounded-full shadow-xl hover:bg-green-600 transition-colors animate-bounce-slow group"
+      className="fixed bottom-6 right-6 z-50 bg-green-500 text-white p-4 rounded-full shadow-xl hover:bg-green-600 transition-colors animate-bounce-slow group cursor-pointer"
       aria-label="Fale conosco no WhatsApp"
     >
       <div className="absolute inset-0 rounded-full bg-green-500 animate-ping opacity-20 group-hover:opacity-40"></div>

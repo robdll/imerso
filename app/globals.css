@@ -4,7 +4,7 @@
 @theme {
   --color-primary: #667EEA;
   --color-secondary: #ea7566;
-  --font-sans: "Inter", sans-serif;
+  --font-sans: "Segoe UI", "Segoe UI Emoji", "Segoe UI Symbol", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 @layer base {
@@ -21,6 +21,7 @@
   }
 
   body {
+    font-family: var(--font-sans);
     color: rgb(226 232 240); /* slate-200 */
     background: radial-gradient(ellipse at top, #1a1a3e 0%, #0a0a0f 50%);
     background-attachment: fixed;

@@ -17,7 +17,7 @@ export const Button = ({
   ...props
 }: ButtonProps) => {
   const baseStyles =
-    "px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed";
+    "px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed";
   
   const variants = {
     primary:
