@@ -14,6 +14,16 @@
     --background-end-rgb: 24, 18, 54; /* deep purple */
   }
 
+  html {
+    background: linear-gradient(
+        to bottom right,
+        rgb(var(--background-start-rgb)),
+        rgb(var(--background-end-rgb))
+      );
+    overscroll-behavior: none;
+    overflow-x: hidden;
+  }
+
   body {
     color: rgb(226 232 240); /* slate-200 */
     background: linear-gradient(
@@ -21,6 +31,9 @@
         rgb(var(--background-start-rgb)),
         rgb(var(--background-end-rgb))
       );
+    background-attachment: fixed;
     min-height: 100vh;
+    overscroll-behavior: none;
+    overflow-x: hidden;
   }
 }
