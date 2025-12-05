@@ -1,6 +1,4 @@
 // FILE: @/components/sections/NumbersSection.tsx
-import React from "react";
-
 export const NumbersSection = () => {
   const stats = [
     {
