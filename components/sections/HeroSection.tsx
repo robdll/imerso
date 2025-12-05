@@ -14,12 +14,23 @@ export const HeroSection = () => {
         <div className="text-center lg:text-left space-y-8">
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
-              Tours 360° Interativos
+              Tours 360°{" "}
+            </span>
+            <span 
+              className="bg-clip-text text-transparent"
+              style={{
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text'
+              }}
+            >
+              Interativos
             </span>
           </h1>
           
           <p className="text-xl text-slate-400 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-            Transforme Espaços em Experiências
+            Transforme Seus Espaços em Experiências Virtuais Imersiva
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">

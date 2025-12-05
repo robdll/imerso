@@ -17,7 +17,7 @@ export const Navbar = () => {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-white/10 py-3">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-[rgba(10,10,15,0.8)] backdrop-blur-md border-b border-white/10 py-3">
       <div className="container mx-auto px-6 flex justify-between items-center">
         {/* Logo */}
         <Link href="/" className="text-2xl font-bold tracking-wider">
@@ -61,7 +61,7 @@ export const Navbar = () => {
 
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 top-[60px] bg-slate-900/95 backdrop-blur-xl z-40 flex flex-col items-center justify-center gap-8 md:hidden animate-in fade-in slide-in-from-top-5 duration-300">
+        <div className="fixed inset-0 top-[60px] bg-[rgba(10,10,15,0.95)] backdrop-blur-xl z-40 flex flex-col items-center justify-center gap-8 md:hidden animate-in fade-in slide-in-from-top-5 duration-300">
           <ul className="flex flex-col items-center gap-6 text-xl">
             {navLinks.map((link) => (
               <li key={link.name}>
