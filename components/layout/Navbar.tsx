@@ -20,7 +20,7 @@ export const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[rgba(10,10,15,0.8)] backdrop-blur-md border-b border-white/10 py-3">
       <div className="container mx-auto px-6 flex justify-between items-center">
         {/* Logo */}
-        <Link href="/" className="text-2xl font-bold tracking-wider">
+        <Link href="/" className="text-2xl font-bold tracking-wider transition-transform duration-300 hover:scale-105">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-[#764ba2]">
             IMERSO
           </span>

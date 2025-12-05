@@ -12,7 +12,7 @@ export const HeroSection = () => {
 
       <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
         <div className="text-center lg:text-left space-y-8">
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-none">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
               Tours 360°{" "}
             </span>
