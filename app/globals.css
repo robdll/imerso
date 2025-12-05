@@ -30,3 +30,15 @@
     overflow-x: hidden;
   }
 }
+
+@layer components {
+  .how-it-works-card {
+    transition: all 0.3s ease;
+  }
+
+  .how-it-works-card:hover {
+    transform: translateY(-10px);
+    border-color: rgba(102, 126, 234, 0.3);
+    box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+  }
+}
