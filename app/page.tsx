@@ -8,6 +8,7 @@ import { ServicesSection } from "@/components/sections/ServicesSection";
 import { FeaturesSection } from "@/components/sections/FeaturesSection";
 import { PricesSection } from "@/components/sections/PricesSection";
 import { ContactSection } from "@/components/sections/ContactSection";
+import { CTASection } from "@/components/sections/CTASection";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 
 export default function Home() {
@@ -29,6 +30,8 @@ export default function Home() {
       <PricesSection />
       
       <ContactSection />
+      
+      <CTASection />
       
       <Footer />
       
