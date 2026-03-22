@@ -1,11 +1,53 @@
 // FILE: @/components/sections/ContactSection.tsx
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Card } from "@/components/ui/Card";
 
 export const ContactSection = () => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">(
+    "idle"
+  );
+  const [errorMessage, setErrorMessage] = useState("");
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setStatus("loading");
+    setErrorMessage("");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, subject, message }),
+      });
+
+      const data = (await res.json()) as { error?: string };
+
+      if (!res.ok) {
+        setStatus("error");
+        setErrorMessage(data.error ?? "Erro ao enviar.");
+        return;
+      }
+
+      setStatus("success");
+      setName("");
+      setEmail("");
+      setSubject("");
+      setMessage("");
+    } catch {
+      setStatus("error");
+      setErrorMessage("Erro de rede. Tente novamente.");
+    }
+  }
+
   return (
     <section id="contact" className="py-24 relative overflow-hidden">
        {/* Background Glow */}
@@ -57,30 +99,77 @@ export const ContactSection = () => {
           </div>
 
           <Card className="p-8 md:p-10 bg-white/5 backdrop-blur-xl border-white/10">
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleSubmit}>
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label htmlFor="name" className="text-sm font-medium text-slate-300">Nome</label>
-                  <Input id="name" placeholder="Seu nome" />
+                  <Input
+                    id="name"
+                    name="name"
+                    placeholder="Seu nome"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    autoComplete="name"
+                  />
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="email" className="text-sm font-medium text-slate-300">Email</label>
-                  <Input id="email" type="email" placeholder="seu@email.com" />
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="seu@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    autoComplete="email"
+                  />
                 </div>
               </div>
               
               <div className="space-y-2">
                 <label htmlFor="subject" className="text-sm font-medium text-slate-300">Assunto</label>
-                <Input id="subject" placeholder="Como podemos ajudar?" />
+                <Input
+                  id="subject"
+                  name="subject"
+                  placeholder="Como podemos ajudar?"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  required
+                />
               </div>
 
               <div className="space-y-2">
                 <label htmlFor="message" className="text-sm font-medium text-slate-300">Mensagem</label>
-                <Textarea id="message" rows={4} placeholder="Digite sua mensagem..." />
+                <Textarea
+                  id="message"
+                  name="message"
+                  rows={4}
+                  placeholder="Digite sua mensagem..."
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  required
+                />
               </div>
 
-              <Button type="submit" className="w-full py-4 text-base">
-                Enviar Mensagem
+              {status === "success" && (
+                <p className="text-sm text-emerald-400" role="status">
+                  Mensagem enviada. Entraremos em contato em breve.
+                </p>
+              )}
+              {status === "error" && errorMessage && (
+                <p className="text-sm text-red-400" role="alert">
+                  {errorMessage}
+                </p>
+              )}
+
+              <Button
+                type="submit"
+                className="w-full py-4 text-base"
+                disabled={status === "loading"}
+              >
+                {status === "loading" ? "Enviando…" : "Enviar Mensagem"}
               </Button>
             </form>
           </Card>
