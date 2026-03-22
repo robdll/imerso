@@ -3,12 +3,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { PanoramaViewer } from "@/components/panorama/PanoramaViewer";
 import { VirtualTour, type VirtualTourConfig } from "@/components/panorama/VirtualTour";
 
 const HOTSPOT_STORAGE_KEY = "imerso-tour-hotspot-overrides-v1";
 const TOUR_HFOV = 120;
-const SAMPLE_PANORAMA = "/images/entrance.jpg";
+const SHOW_CONFIG_PANEL = false;
 
 const SCENE_IMAGES: Record<string, string> = {
   entrance: "/images/entrance.jpg",
@@ -157,7 +156,6 @@ const HOTSPOT_TUNER_INITIAL_PLACEMENT =
   DEFAULT_HOTSPOT_PLACEMENT_OVERRIDES[HOTSPOT_TUNER_INITIAL_LINK];
 
 export default function DemoPage() {
-  const [mode, setMode] = useState<"single" | "tour">("single");
   const [startSceneId, setStartSceneId] = useState("entrance");
   const [jumpSceneId, setJumpSceneId] = useState("entrance");
   const [selectedLink, setSelectedLink] = useState(HOTSPOT_TUNER_INITIAL_LINK);
@@ -275,61 +273,26 @@ export default function DemoPage() {
             <ArrowLeft className="w-5 h-5" />
             Voltar
           </Link>
-          <div className="flex gap-4">
-            <button
-              onClick={() => setMode("single")}
-              className={`px-4 py-2 rounded-full font-medium transition-all ${
-                mode === "single"
-                  ? "bg-gradient-to-r from-primary to-[#764ba2] text-white"
-                  : "bg-white/10 text-[#b0b0d0] hover:bg-white/20"
-              }`}
-            >
-              360° Foto
-            </button>
-            <button
-              onClick={() => setMode("tour")}
-              className={`px-4 py-2 rounded-full font-medium transition-all ${
-                mode === "tour"
-                  ? "bg-gradient-to-r from-primary to-[#764ba2] text-white"
-                  : "bg-white/10 text-[#b0b0d0] hover:bg-white/20"
-              }`}
-            >
-              Tour Caminhável
-            </button>
-          </div>
+          <div className="text-sm text-[#b0b0d0]">Tour Caminhável</div>
         </div>
       </div>
 
       <div className="pt-24 pb-12 px-6">
         <div className="container mx-auto max-w-5xl">
           <h1 className="text-3xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-primary to-[#764ba2]">
-            Demonstração 360°
+            Tour Caminhável 360°
           </h1>
-          <p className="text-[#b0b0d0] mb-8">
-            {mode === "single"
-              ? "Arraste para explorar a foto 360°. Use suas próprias fotos do Insta360 em /public/images/"
-              : "Clique nos pontos destacados para navegar entre os ambientes."}
-          </p>
+          <p className="text-[#b0b0d0] mb-8">Clique nos pontos destacados para navegar entre os ambientes.</p>
 
-          <div className={`grid gap-6 ${mode === "tour" ? "lg:grid-cols-[minmax(0,1fr)_340px]" : "grid-cols-1"}`}>
+          <div className={`grid gap-6 ${SHOW_CONFIG_PANEL ? "lg:grid-cols-[minmax(0,1fr)_340px]" : "grid-cols-1"}`}>
             <div
               className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-slate-900/50"
-              key={mode}
+              key={startSceneId}
             >
-              {mode === "single" ? (
-                <PanoramaViewer
-                  imageUrl={SAMPLE_PANORAMA}
-                  height={500}
-                  title="Demonstração 360°"
-                  author="Imerso"
-                  compass
-                />
-              ) : (
-                <VirtualTour key={startSceneId} config={SAMPLE_TOUR_CONFIG} height={500} />
-              )}
+              <VirtualTour key={startSceneId} config={SAMPLE_TOUR_CONFIG} height={500} />
             </div>
 
-            {mode === "tour" && (
+            {SHOW_CONFIG_PANEL && (
               <aside className="p-5 rounded-xl bg-slate-900/30 border border-white/10 h-fit lg:sticky lg:top-28">
                 <div className="flex items-center justify-between gap-3 mb-4">
                   <h2 className="text-lg font-semibold text-primary">Hotspot Tuner</h2>
