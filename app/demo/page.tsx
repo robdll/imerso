@@ -243,17 +243,6 @@ export default function DemoPage() {
             )}
           </div>
 
-          <div className="mt-8 p-6 rounded-xl bg-slate-900/30 border border-white/5">
-            <h2 className="text-lg font-semibold mb-4 text-primary">
-              Como usar suas fotos do Insta360
-            </h2>
-            <ol className="list-decimal list-inside space-y-2 text-[#b0b0d0] text-sm">
-              <li>Exporte suas fotos do Insta360 Studio em formato JPG (equirectangular)</li>
-              <li>Coloque os arquivos na pasta <code className="bg-white/10 px-1 rounded">public/images/</code></li>
-              <li>Use o caminho <code className="bg-white/10 px-1 rounded">/images/sua-foto.jpg</code> no componente</li>
-              <li>Para tours com múltiplos ambientes, defina hotspots conectando as cenas</li>
-            </ol>
-          </div>
         </div>
       </div>
     </main>
