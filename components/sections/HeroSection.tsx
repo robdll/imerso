@@ -1,8 +1,8 @@
 // FILE: @/components/sections/HeroSection.tsx
 import React from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
+import { HeroVideo } from "@/components/sections/HeroVideo";
 
 export const HeroSection = () => {
   return (
@@ -46,19 +46,7 @@ export const HeroSection = () => {
         <div className="relative group">
           <div className="absolute -inset-1 bg-gradient-to-r from-primary to-[#764ba2] rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-1000 group-hover:duration-200"></div>
           <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-slate-900/50 backdrop-blur-sm">
-             <Image
-              src="https://placehold.co/600x400/png"
-              alt="Tour 360 Demo"
-              width={600}
-              height={400}
-              className="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105"
-              priority
-            />
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="bg-black/40 backdrop-blur-sm rounded-full p-4 border border-white/20">
-                <span className="text-white font-semibold tracking-wider">360° VIEW</span>
-              </div>
-            </div>
+            <HeroVideo />
           </div>
         </div>
       </div>

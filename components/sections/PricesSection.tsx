@@ -5,7 +5,17 @@ import React from "react";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
-const plans = [
+type Plan = {
+  name: string;
+  price: string;
+  period: string;
+  features: string[];
+  popular: boolean;
+  priceAsterisk?: boolean;
+  startingFromLabel?: string;
+};
+
+const plans: Plan[] = [
   {
     name: "Essencial",
     price: "450",
@@ -25,6 +35,8 @@ const plans = [
     name: "Profissional",
     price: "1.000",
     period: "por imóvel",
+    priceAsterisk: true,
+    startingFromLabel: "A partir de",
     features: [
       "Tour 360° premium",
       "Até 250m²",
@@ -42,6 +54,8 @@ const plans = [
     name: "Empresarial",
     price: "1.450",
     period: "por projeto",
+    priceAsterisk: true,
+    startingFromLabel: "A partir de",
     features: [
       "Tour 360° ultra premium",
       "Metragem ilimitada",
@@ -115,6 +129,11 @@ export const PricesSection = () => {
 
               {/* Price */}
               <div className="text-center mb-2">
+                {plan.startingFromLabel && (
+                  <p className="text-xs font-medium text-[#9090c0] uppercase tracking-wider mb-1">
+                    {plan.startingFromLabel}
+                  </p>
+                )}
                 <span
                   className="text-5xl font-bold"
                   style={{
@@ -124,6 +143,14 @@ export const PricesSection = () => {
                   }}
                 >
                   R$ {plan.price}
+                  {plan.priceAsterisk && (
+                    <sup
+                      className="text-2xl ml-0.5 align-super"
+                      aria-label="Preço inicial; valores podem variar"
+                    >
+                      *
+                    </sup>
+                  )}
                 </span>
                 <p className="text-sm text-[#b0b0d0] mt-2">{plan.period}</p>
               </div>
