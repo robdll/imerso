@@ -48,9 +48,12 @@ export function PanoramaViewer({
   useEffect(() => {
     const container = containerRef.current;
     if (!container || typeof window === "undefined") return;
+    let isDisposed = false;
+    let localViewer: { destroy: () => void } | null = null;
 
     const initViewer = async () => {
       await import("pannellum");
+      if (isDisposed) return;
       const pannellum = (window as unknown as { pannellum: { viewer: (el: HTMLElement, config: object) => { destroy: () => void } } }).pannellum;
       if (!pannellum?.viewer) return;
 
@@ -59,6 +62,9 @@ export function PanoramaViewer({
         panorama: imageUrl,
         autoLoad: true,
         mouseZoom: false,
+        keyboardZoom: false,
+        doubleClickZoom: false,
+        touchZoom: false,
         pitch,
         yaw,
         hfov,
@@ -70,7 +76,13 @@ export function PanoramaViewer({
       if (author) config.author = author;
 
       try {
-        viewerRef.current = pannellum.viewer(container, config);
+        if (viewerRef.current?.destroy) {
+          viewerRef.current.destroy();
+          viewerRef.current = null;
+        }
+        container.innerHTML = "";
+        localViewer = pannellum.viewer(container, config);
+        viewerRef.current = localViewer;
       } catch (err) {
         console.error("Pannellum viewer error:", err);
       }
@@ -79,10 +91,16 @@ export function PanoramaViewer({
     initViewer();
 
     return () => {
+      isDisposed = true;
+      if (localViewer?.destroy) {
+        localViewer.destroy();
+        localViewer = null;
+      }
       if (viewerRef.current?.destroy) {
         viewerRef.current.destroy();
         viewerRef.current = null;
       }
+      container.innerHTML = "";
     };
   }, [imageUrl, pitch, yaw, hfov, compass, autoRotate, title, author]);
 

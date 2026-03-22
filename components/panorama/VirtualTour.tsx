@@ -50,9 +50,12 @@ export function VirtualTour({
   useEffect(() => {
     const container = containerRef.current;
     if (!container || typeof window === "undefined") return;
+    let isDisposed = false;
+    let localViewer: { destroy: () => void } | null = null;
 
     const initViewer = async () => {
       await import("pannellum");
+      if (isDisposed) return;
       const pannellum = (window as unknown as { pannellum: { viewer: (el: HTMLElement, cfg: object) => { destroy: () => void } } }).pannellum;
       if (!pannellum?.viewer) return;
 
@@ -60,6 +63,9 @@ export function VirtualTour({
         default: {
           autoLoad: true,
           mouseZoom: false,
+          keyboardZoom: false,
+          doubleClickZoom: false,
+          touchZoom: false,
           firstScene: config.firstScene,
           sceneFadeDuration: config.sceneFadeDuration ?? 1000,
           author: config.author,
@@ -81,7 +87,13 @@ export function VirtualTour({
       };
 
       try {
-        viewerRef.current = pannellum.viewer(container, pannellumConfig);
+        if (viewerRef.current?.destroy) {
+          viewerRef.current.destroy();
+          viewerRef.current = null;
+        }
+        container.innerHTML = "";
+        localViewer = pannellum.viewer(container, pannellumConfig);
+        viewerRef.current = localViewer;
       } catch (err) {
         console.error("Pannellum tour error:", err);
       }
@@ -90,10 +102,16 @@ export function VirtualTour({
     initViewer();
 
     return () => {
+      isDisposed = true;
+      if (localViewer?.destroy) {
+        localViewer.destroy();
+        localViewer = null;
+      }
       if (viewerRef.current?.destroy) {
         viewerRef.current.destroy();
         viewerRef.current = null;
       }
+      container.innerHTML = "";
     };
   }, [config]);
 
