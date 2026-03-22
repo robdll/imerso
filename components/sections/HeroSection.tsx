@@ -1,6 +1,7 @@
 // FILE: @/components/sections/HeroSection.tsx
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 
 export const HeroSection = () => {
@@ -34,9 +35,11 @@ export const HeroSection = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-            <Button variant="primary" className="text-lg px-8 py-4">
-              Ver Demonstração
-            </Button>
+            <Link href="/demo">
+              <Button variant="primary" className="text-lg px-8 py-4">
+                Ver Demonstração
+              </Button>
+            </Link>
             <Button variant="ghost" className="text-lg px-8 py-4">
               Fale Conosco
             </Button>
