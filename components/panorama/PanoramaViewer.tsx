@@ -58,6 +58,7 @@ export function PanoramaViewer({
         type: "equirectangular",
         panorama: imageUrl,
         autoLoad: true,
+        mouseZoom: false,
         pitch,
         yaw,
         hfov,

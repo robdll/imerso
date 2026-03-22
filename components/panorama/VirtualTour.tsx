@@ -59,6 +59,7 @@ export function VirtualTour({
       const pannellumConfig = {
         default: {
           autoLoad: true,
+          mouseZoom: false,
           firstScene: config.firstScene,
           sceneFadeDuration: config.sceneFadeDuration ?? 1000,
           author: config.author,
