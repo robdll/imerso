@@ -27,10 +27,10 @@ export const CTASection = () => {
               variant="primary"
               className="text-lg px-8 py-4"
               onClick={() => {
-                window.open("https://wa.me/5577999999999", "_blank");
+                window.open("https://wa.me/5571982839384", "_blank");
               }}
             >
-              WhatsApp: (77) 9 9999-9999
+              Whatsapp
             </Button>
           </div>
 
@@ -38,10 +38,10 @@ export const CTASection = () => {
           <p className="text-base text-[#b0b0d0]">
             ou envie um email para:{" "}
             <a
-              href="mailto:contato@imerso.com.br"
+              href="mailto:360imerso@gmail.com"
               className="text-primary hover:text-[#764ba2] transition-colors underline"
             >
-              contato@imerso.com.br
+              360imerso@gmail.com
             </a>
           </p>
         </div>

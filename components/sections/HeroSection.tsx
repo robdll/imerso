@@ -35,14 +35,11 @@ export const HeroSection = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-            <Link href="/demo">
+            <Link href="#contact">
               <Button variant="primary" className="text-lg px-8 py-4">
-                Ver Demonstração
+                Fale Conosco
               </Button>
             </Link>
-            <Button variant="ghost" className="text-lg px-8 py-4">
-              Fale Conosco
-            </Button>
           </div>
         </div>
 

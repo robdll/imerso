@@ -10,7 +10,6 @@ export const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { name: "Portfólio", href: "#portfolio" },
     { name: "Como Funciona", href: "#como-funciona" },
     { name: "Preços", href: "#precos" },
     { name: "Contato", href: "#contact" },
@@ -48,9 +47,11 @@ export const Navbar = () => {
 
         {/* Desktop Button - Right aligned */}
         <div className="hidden md:flex items-center justify-end">
-          <Button variant="primary" className="px-5 py-2 text-sm">
-            Agendar Demo
-          </Button>
+          <Link href="/demo">
+            <Button variant="primary" className="px-5 py-2 text-sm">
+              Ver Demonstração
+            </Button>
+          </Link>
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -79,13 +80,11 @@ export const Navbar = () => {
               </li>
             ))}
           </ul>
-          <Button
-            variant="primary"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="w-64"
-          >
-            Agendar Demo
-          </Button>
+          <Link href="/demo" onClick={() => setIsMobileMenuOpen(false)}>
+            <Button variant="primary" className="w-64">
+              Ver Demonstração
+            </Button>
+          </Link>
         </div>
       )}
     </nav>

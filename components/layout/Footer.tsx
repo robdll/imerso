@@ -1,6 +1,6 @@
 // FILE: @/components/layout/Footer.tsx
 import Link from "next/link";
-import { Instagram, Facebook, Linkedin, Twitter } from "lucide-react";
+import { Instagram } from "lucide-react";
 
 export const Footer = () => {
   return (
@@ -19,17 +19,14 @@ export const Footer = () => {
           </div>
 
           <div className="flex gap-6">
-            <a href="#" className="text-slate-400 hover:text-primary transition-colors">
+            <a
+              href="https://www.instagram.com/360.imerso/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-400 hover:text-primary transition-colors"
+              aria-label="Instagram"
+            >
               <Instagram size={24} />
-            </a>
-            <a href="#" className="text-slate-400 hover:text-primary transition-colors">
-              <Facebook size={24} />
-            </a>
-            <a href="#" className="text-slate-400 hover:text-primary transition-colors">
-              <Linkedin size={24} />
-            </a>
-            <a href="#" className="text-slate-400 hover:text-primary transition-colors">
-              <Twitter size={24} />
             </a>
           </div>
         </div>

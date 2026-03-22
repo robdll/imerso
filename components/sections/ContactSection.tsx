@@ -28,7 +28,12 @@ export const ContactSection = () => {
                 </div>
                 <div>
                   <p className="text-sm text-slate-500">Email</p>
-                  <p className="text-white font-medium">contato@imerso.com.br</p>
+                  <a
+                    href="mailto:360imerso@gmail.com"
+                    className="text-white font-medium hover:text-primary transition-colors"
+                  >
+                    360imerso@gmail.com
+                  </a>
                 </div>
               </div>
               
@@ -38,7 +43,14 @@ export const ContactSection = () => {
                 </div>
                 <div>
                   <p className="text-sm text-slate-500">WhatsApp</p>
-                  <p className="text-white font-medium">(77) 9 9999-9999</p>
+                  <a
+                    href="https://wa.me/5571982839384"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white font-medium hover:text-primary transition-colors"
+                  >
+                    +55 71 9 82839384
+                  </a>
                 </div>
               </div>
             </div>

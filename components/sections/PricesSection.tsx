@@ -1,4 +1,6 @@
 // FILE: @/components/sections/PricesSection.tsx
+"use client";
+
 import React from "react";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/Button";
@@ -10,7 +12,7 @@ const plans = [
     period: "por imóvel",
     features: [
       "Tour 360° interativo",
-      "Até 100m²",
+      "Até 80m²",
       "5-8 ambientes",
       "Link + QR Code profissional",
       "Cards para redes sociais",
@@ -21,7 +23,7 @@ const plans = [
   },
   {
     name: "Profissional",
-    price: "850",
+    price: "1.000",
     period: "por imóvel",
     features: [
       "Tour 360° premium",
@@ -149,6 +151,9 @@ export const PricesSection = () => {
               <Button
                 variant="primary"
                 className="w-full mt-8"
+                onClick={() =>
+                  window.open("https://wa.me/5571982839384", "_blank")
+                }
               >
                 Contratar
               </Button>
