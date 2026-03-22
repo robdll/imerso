@@ -2,13 +2,20 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_URL != null
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000");
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "imerso | Tours 360° Interativos para Imóveis",
   description: "Transforme espaços em experiências imersivas com os tours 360° da imerso.",
   openGraph: {
     title: "imerso | Tours 360° Interativos para Imóveis",
     description: "Transforme espaços em experiências imersivas com os tours 360° da imerso.",
-    images: ["https://placehold.co/1200x630/png"],
+    type: "website",
   },
 };
 
