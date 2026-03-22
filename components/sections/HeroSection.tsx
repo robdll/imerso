@@ -31,7 +31,7 @@ export const HeroSection = () => {
           </h1>
           
           <p className="text-xl text-[#b0b0d0] max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-            Transforme Seus Espaços em Experiências Virtuais Imersiva
+            Transforme Seus Espaços em Experiências Virtuais Imersivas
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
