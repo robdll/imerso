@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { PanoramaViewer } from "@/components/panorama/PanoramaViewer";
 import { VirtualTour, type VirtualTourConfig } from "@/components/panorama/VirtualTour";
 
-// Local Insta360 sample in /public/images
+const HOTSPOT_STORAGE_KEY = "imerso-tour-hotspot-overrides-v1";
+const TOUR_HFOV = 120;
 const SAMPLE_PANORAMA = "/images/entrance.jpg";
 
 const SCENE_IMAGES: Record<string, string> = {
@@ -41,7 +42,6 @@ const SCENE_TITLES: Record<string, string> = {
   balcony: "Balcony",
 };
 
-// Forward path exactly as requested by the walking-flow map.
 const FORWARD_LINKS: Record<string, string[]> = {
   entrance: ["corridor-1"],
   "corridor-1": ["bathroom-1", "corridor-2"],
@@ -65,45 +65,31 @@ type HotspotPlacement = {
   targetPitch?: number;
 };
 
-// Fine-tune arrows per connection: "from->to".
-// Update yaw/pitch values here until each arrow matches the door direction.
-const HOTSPOT_PLACEMENT_OVERRIDES: Record<string, HotspotPlacement> = {
-  // Keep entrance arrow centered and obvious on first load.
-  "entrance->corridor-1": { yaw: 180, pitch: -20 },
-  "corridor-1->entrance": { yaw: 170, pitch: -8, targetYaw: 10, targetPitch: -2 },
-
-  "corridor-1->bathroom-1": { yaw: -55, pitch: -9, targetYaw: 130, targetPitch: -2 },
-  "bathroom-1->corridor-1": { yaw: 120, pitch: -9, targetYaw: -20, targetPitch: -2 },
-
-  "corridor-1->corridor-2": { yaw: 15, pitch: -8, targetYaw: 165, targetPitch: -2 },
-  "corridor-2->corridor-1": { yaw: 175, pitch: -8, targetYaw: 0, targetPitch: -2 },
-
-  "bathroom-1->bathroom-2": { yaw: 10, pitch: -8, targetYaw: 180, targetPitch: -2 },
-  "bathroom-2->bathroom-1": { yaw: 180, pitch: -8, targetYaw: 0, targetPitch: -2 },
-
-  "corridor-2->kitchen-1": { yaw: -60, pitch: -8, targetYaw: 120, targetPitch: -2 },
-  "kitchen-1->corridor-2": { yaw: 120, pitch: -8, targetYaw: -20, targetPitch: -2 },
-
-  "corridor-2->corridor-3": { yaw: 8, pitch: -8, targetYaw: 175, targetPitch: -2 },
-  "corridor-3->corridor-2": { yaw: 178, pitch: -8, targetYaw: -5, targetPitch: -2 },
-
-  "kitchen-1->kitchen-2": { yaw: 0, pitch: -8, targetYaw: 180, targetPitch: -2 },
-  "kitchen-2->kitchen-1": { yaw: 178, pitch: -8, targetYaw: 0, targetPitch: -2 },
-
-  "corridor-3->bedroom-1": { yaw: -65, pitch: -9, targetYaw: 130, targetPitch: -2 },
-  "bedroom-1->corridor-3": { yaw: 125, pitch: -9, targetYaw: -20, targetPitch: -2 },
-
-  "corridor-3->corridor-4": { yaw: 15, pitch: -8, targetYaw: 175, targetPitch: -2 },
-  "corridor-4->corridor-3": { yaw: 178, pitch: -8, targetYaw: 5, targetPitch: -2 },
-
-  "corridor-4->living-1": { yaw: -55, pitch: -8, targetYaw: 120, targetPitch: -2 },
-  "living-1->corridor-4": { yaw: 125, pitch: -8, targetYaw: -20, targetPitch: -2 },
-
-  "living-1->living-2": { yaw: 15, pitch: -8, targetYaw: 175, targetPitch: -2 },
-  "living-2->living-1": { yaw: 178, pitch: -8, targetYaw: 0, targetPitch: -2 },
-
-  "living-2->balcony": { yaw: 0, pitch: -8, targetYaw: 180, targetPitch: -2 },
-  "balcony->living-2": { yaw: 178, pitch: -8, targetYaw: 0, targetPitch: -2 },
+const DEFAULT_HOTSPOT_PLACEMENT_OVERRIDES: Record<string, HotspotPlacement> = {
+  "entrance->corridor-1": { yaw: 180, pitch: -20, targetYaw: -121 },
+  "corridor-1->entrance": { yaw: 8, pitch: -20, targetYaw: 180, targetPitch: 7 },
+  "corridor-1->bathroom-1": { yaw: -80, pitch: -20, targetYaw: -99, targetPitch: -2 },
+  "bathroom-1->corridor-1": { yaw: 91, pitch: -20, targetYaw: -120, targetPitch: -2 },
+  "corridor-1->corridor-2": { yaw: -173, pitch: -20, targetYaw: -127, targetPitch: -2 },
+  "corridor-2->corridor-1": { yaw: 5, pitch: -20, targetYaw: 0, targetPitch: -2 },
+  "bathroom-1->bathroom-2": { yaw: -90, pitch: -20, targetYaw: 50, targetPitch: -2 },
+  "bathroom-2->bathroom-1": { yaw: 78, pitch: -20, targetYaw: 76, targetPitch: -2 },
+  "corridor-2->kitchen-1": { yaw: -80, pitch: -20, targetYaw: -80, targetPitch: -2 },
+  "kitchen-1->corridor-2": { yaw: 92, pitch: -20, targetYaw: -20, targetPitch: -2 },
+  "corridor-2->corridor-3": { yaw: -170, pitch: -20, targetYaw: 175, targetPitch: -2 },
+  "corridor-3->corridor-2": { yaw: -8, pitch: -20, targetYaw: -5, targetPitch: -2 },
+  "kitchen-1->kitchen-2": { yaw: -92, pitch: -20, targetYaw: 180, targetPitch: -2 },
+  "kitchen-2->kitchen-1": { yaw: 83, pitch: -20, targetYaw: 59, targetPitch: -2 },
+  "corridor-3->bedroom-1": { yaw: -95, pitch: -20, targetYaw: 130, targetPitch: -2 },
+  "bedroom-1->corridor-3": { yaw: 68, pitch: -20, targetYaw: -133, targetPitch: -2 },
+  "corridor-3->corridor-4": { yaw: 173, pitch: -20, targetYaw: -158, targetPitch: -2 },
+  "corridor-4->corridor-3": { yaw: 0, pitch: -20, targetYaw: -38, targetPitch: -2 },
+  "corridor-4->living-1": { yaw: -159, pitch: -20, targetYaw: -49, targetPitch: -2 },
+  "living-1->corridor-4": { yaw: 15, pitch: -20, targetYaw: -20, targetPitch: -2 },
+  "living-1->living-2": { yaw: -70, pitch: -20, targetYaw: -63, targetPitch: -2 },
+  "living-2->living-1": { yaw: 73, pitch: -20, targetYaw: 0, targetPitch: -2 },
+  "living-2->balcony": { yaw: -114, pitch: -20, targetYaw: 61, targetPitch: -2 },
+  "balcony->living-2": { yaw: 52, pitch: -20, targetYaw: 0, targetPitch: -2 },
 };
 
 function buildBidirectionalLinks(links: Record<string, string[]>) {
@@ -123,11 +109,15 @@ function buildBidirectionalLinks(links: Record<string, string[]>) {
   );
 }
 
-function createHotspots(fromSceneId: string, targets: string[]) {
+function createHotspots(
+  fromSceneId: string,
+  targets: string[],
+  hotspotOverrides: Record<string, HotspotPlacement>
+) {
   if (targets.length === 0) return [];
   if (targets.length === 1) {
     const onlyTarget = targets[0];
-    const placement = HOTSPOT_PLACEMENT_OVERRIDES[`${fromSceneId}->${onlyTarget}`];
+    const placement = hotspotOverrides[`${fromSceneId}->${onlyTarget}`];
     return [
       {
         pitch: placement?.pitch ?? -8,
@@ -144,7 +134,7 @@ function createHotspots(fromSceneId: string, targets: string[]) {
   return targets.map((sceneId, index) => {
     const step = 70 / (targets.length - 1);
     const yaw = -35 + step * index;
-    const placement = HOTSPOT_PLACEMENT_OVERRIDES[`${fromSceneId}->${sceneId}`];
+    const placement = hotspotOverrides[`${fromSceneId}->${sceneId}`];
     return {
       pitch: placement?.pitch ?? -8,
       yaw: placement?.yaw ?? yaw,
@@ -158,36 +148,23 @@ function createHotspots(fromSceneId: string, targets: string[]) {
 }
 
 const SCENE_LINKS = buildBidirectionalLinks(FORWARD_LINKS);
+const SCENE_IDS = Object.keys(SCENE_IMAGES);
 const HOTSPOT_LINK_OPTIONS = Object.entries(SCENE_LINKS).flatMap(([fromSceneId, targets]) =>
   targets.map((toSceneId) => `${fromSceneId}->${toSceneId}`)
 );
 const HOTSPOT_TUNER_INITIAL_LINK = HOTSPOT_LINK_OPTIONS[0] ?? "";
 const HOTSPOT_TUNER_INITIAL_PLACEMENT =
-  HOTSPOT_PLACEMENT_OVERRIDES[HOTSPOT_TUNER_INITIAL_LINK];
-
-const SAMPLE_TOUR_CONFIG: VirtualTourConfig = {
-  firstScene: "entrance",
-  sceneFadeDuration: 1000,
-  author: "Imerso Demo",
-  scenes: Object.fromEntries(
-    Object.entries(SCENE_IMAGES).map(([sceneId, panorama]) => [
-      sceneId,
-      {
-        id: sceneId,
-        title: SCENE_TITLES[sceneId],
-        panorama,
-        yaw: sceneId === "entrance" ? 180 : 0,
-        pitch: 0,
-        hfov: 100,
-        hotSpots: createHotspots(sceneId, SCENE_LINKS[sceneId] ?? []),
-      },
-    ])
-  ),
-};
+  DEFAULT_HOTSPOT_PLACEMENT_OVERRIDES[HOTSPOT_TUNER_INITIAL_LINK];
 
 export default function DemoPage() {
   const [mode, setMode] = useState<"single" | "tour">("single");
+  const [startSceneId, setStartSceneId] = useState("entrance");
+  const [jumpSceneId, setJumpSceneId] = useState("entrance");
   const [selectedLink, setSelectedLink] = useState(HOTSPOT_TUNER_INITIAL_LINK);
+  const [copied, setCopied] = useState(false);
+  const [hotspotOverrides, setHotspotOverrides] = useState<Record<string, HotspotPlacement>>(
+    DEFAULT_HOTSPOT_PLACEMENT_OVERRIDES
+  );
   const [uiYaw, setUiYaw] = useState(Math.round(HOTSPOT_TUNER_INITIAL_PLACEMENT?.yaw ?? 0));
   const [uiTargetYaw, setUiTargetYaw] = useState(
     Math.round(HOTSPOT_TUNER_INITIAL_PLACEMENT?.targetYaw ?? 0)
@@ -196,11 +173,95 @@ export default function DemoPage() {
     Math.round(HOTSPOT_TUNER_INITIAL_PLACEMENT?.targetPitch ?? 0)
   );
 
-  const syncTunerFields = (link: string) => {
-    const placement = HOTSPOT_PLACEMENT_OVERRIDES[link];
-    setUiYaw(Math.round(placement?.yaw ?? 0));
-    setUiTargetYaw(Math.round(placement?.targetYaw ?? 0));
-    setUiTargetPitch(Math.round(placement?.targetPitch ?? 0));
+  useEffect(() => {
+    const raw = localStorage.getItem(HOTSPOT_STORAGE_KEY);
+    if (!raw) return;
+    try {
+      const parsed = JSON.parse(raw) as Record<string, HotspotPlacement>;
+      setHotspotOverrides({ ...DEFAULT_HOTSPOT_PLACEMENT_OVERRIDES, ...parsed });
+    } catch {
+      // Ignore invalid saved data and keep defaults.
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(HOTSPOT_STORAGE_KEY, JSON.stringify(hotspotOverrides));
+  }, [hotspotOverrides]);
+
+  const syncTunerFields = (link: string, sourceOverrides = hotspotOverrides) => {
+    const placement =
+      sourceOverrides[link] ??
+      DEFAULT_HOTSPOT_PLACEMENT_OVERRIDES[link] ??
+      ({ yaw: 0, pitch: -8, targetYaw: 0, targetPitch: 0 } as HotspotPlacement);
+    setUiYaw(Math.round(placement.yaw ?? 0));
+    setUiTargetYaw(Math.round(placement.targetYaw ?? 0));
+    setUiTargetPitch(Math.round(placement.targetPitch ?? 0));
+  };
+
+  useEffect(() => {
+    syncTunerFields(selectedLink);
+  }, [selectedLink, hotspotOverrides]);
+
+  const SAMPLE_TOUR_CONFIG: VirtualTourConfig = useMemo(
+    () => ({
+      firstScene: startSceneId,
+      sceneFadeDuration: 1000,
+      author: "Imerso Demo",
+      scenes: Object.fromEntries(
+        Object.entries(SCENE_IMAGES).map(([sceneId, panorama]) => [
+          sceneId,
+          {
+            id: sceneId,
+            title: SCENE_TITLES[sceneId],
+            panorama,
+            yaw: sceneId === "entrance" ? 180 : 0,
+            pitch: 0,
+            hfov: TOUR_HFOV,
+            hotSpots: createHotspots(sceneId, SCENE_LINKS[sceneId] ?? [], hotspotOverrides),
+          },
+        ])
+      ),
+    }),
+    [hotspotOverrides, startSceneId]
+  );
+
+  const updateSelectedLinkPlacement = (patch: Partial<HotspotPlacement>) => {
+    if (!selectedLink) return;
+    setHotspotOverrides((prev) => {
+      const current =
+        prev[selectedLink] ??
+        DEFAULT_HOTSPOT_PLACEMENT_OVERRIDES[selectedLink] ??
+        ({ yaw: 0, pitch: -8 } as HotspotPlacement);
+      return {
+        ...prev,
+        [selectedLink]: { ...current, ...patch },
+      };
+    });
+  };
+
+  const copyOverrides = async () => {
+    await navigator.clipboard.writeText(JSON.stringify(hotspotOverrides, null, 2));
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1200);
+  };
+
+  const resetSelectedLink = () => {
+    if (!selectedLink) return;
+    setHotspotOverrides((prev) => {
+      const next = { ...prev };
+      const defaultValue = DEFAULT_HOTSPOT_PLACEMENT_OVERRIDES[selectedLink];
+      if (defaultValue) next[selectedLink] = defaultValue;
+      else delete next[selectedLink];
+      return next;
+    });
+  };
+
+  const loadSelectedScene = () => {
+    setStartSceneId(jumpSceneId);
+    const firstLinkFromScene = (SCENE_LINKS[jumpSceneId] ?? [])[0];
+    if (firstLinkFromScene) {
+      setSelectedLink(`${jumpSceneId}->${firstLinkFromScene}`);
+    }
   };
 
   return (
@@ -264,7 +325,7 @@ export default function DemoPage() {
                   compass
                 />
               ) : (
-                <VirtualTour config={SAMPLE_TOUR_CONFIG} height={500} />
+                <VirtualTour key={startSceneId} config={SAMPLE_TOUR_CONFIG} height={500} />
               )}
             </div>
 
@@ -273,8 +334,31 @@ export default function DemoPage() {
                 <div className="flex items-center justify-between gap-3 mb-4">
                   <h2 className="text-lg font-semibold text-primary">Hotspot Tuner</h2>
                   <span className="text-xs text-[#b0b0d0] bg-white/10 px-2 py-1 rounded">
-                    UI only (no live apply yet)
+                    Live apply + auto save
                   </span>
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-sm text-[#b0b0d0] mb-2">Start from scene</label>
+                  <div className="flex gap-2">
+                    <select
+                      className="flex-1 rounded-lg bg-slate-950/60 border border-white/15 px-3 py-2 text-sm"
+                      value={jumpSceneId}
+                      onChange={(e) => setJumpSceneId(e.target.value)}
+                    >
+                      {SCENE_IDS.map((sceneId) => (
+                        <option key={sceneId} value={sceneId}>
+                          {SCENE_TITLES[sceneId]}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      onClick={loadSelectedScene}
+                      className="px-3 py-2 rounded bg-white/10 hover:bg-white/20 transition text-sm whitespace-nowrap"
+                    >
+                      Load
+                    </button>
+                  </div>
                 </div>
 
                 <div className="mb-4">
@@ -305,7 +389,11 @@ export default function DemoPage() {
                       max={180}
                       step={1}
                       value={uiYaw}
-                      onChange={(e) => setUiYaw(Number(e.target.value))}
+                      onChange={(e) => {
+                        const next = Number(e.target.value);
+                        setUiYaw(next);
+                        updateSelectedLinkPlacement({ yaw: next });
+                      }}
                       className="w-full"
                     />
                   </label>
@@ -318,7 +406,11 @@ export default function DemoPage() {
                       max={180}
                       step={1}
                       value={uiTargetYaw}
-                      onChange={(e) => setUiTargetYaw(Number(e.target.value))}
+                      onChange={(e) => {
+                        const next = Number(e.target.value);
+                        setUiTargetYaw(next);
+                        updateSelectedLinkPlacement({ targetYaw: next });
+                      }}
                       className="w-full"
                     />
                   </label>
@@ -331,15 +423,33 @@ export default function DemoPage() {
                       max={90}
                       step={1}
                       value={uiTargetPitch}
-                      onChange={(e) => setUiTargetPitch(Number(e.target.value))}
+                      onChange={(e) => {
+                        const next = Number(e.target.value);
+                        setUiTargetPitch(next);
+                        updateSelectedLinkPlacement({ targetPitch: next });
+                      }}
                       className="w-full"
                     />
                   </label>
                 </div>
+
+                <div className="flex flex-wrap gap-2 mt-4">
+                  <button
+                    onClick={copyOverrides}
+                    className="px-3 py-1 rounded bg-gradient-to-r from-primary to-[#764ba2] text-white text-sm"
+                  >
+                    {copied ? "Copied" : "Copy JSON"}
+                  </button>
+                  <button
+                    onClick={resetSelectedLink}
+                    className="px-3 py-1 rounded bg-white/10 hover:bg-white/20 transition text-sm"
+                  >
+                    Reset selected link
+                  </button>
+                </div>
               </aside>
             )}
           </div>
-
         </div>
       </div>
     </main>

@@ -38,11 +38,6 @@
 }
 
 @layer components {
-  /* Pannellum temporary drag overlay can stick and block page interactions. */
-  .pnlm-dragfix {
-    pointer-events: none !important;
-  }
-
   .how-it-works-card {
     transition: all 0.3s ease;
   }
