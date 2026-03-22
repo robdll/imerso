@@ -158,6 +158,12 @@ function createHotspots(fromSceneId: string, targets: string[]) {
 }
 
 const SCENE_LINKS = buildBidirectionalLinks(FORWARD_LINKS);
+const HOTSPOT_LINK_OPTIONS = Object.entries(SCENE_LINKS).flatMap(([fromSceneId, targets]) =>
+  targets.map((toSceneId) => `${fromSceneId}->${toSceneId}`)
+);
+const HOTSPOT_TUNER_INITIAL_LINK = HOTSPOT_LINK_OPTIONS[0] ?? "";
+const HOTSPOT_TUNER_INITIAL_PLACEMENT =
+  HOTSPOT_PLACEMENT_OVERRIDES[HOTSPOT_TUNER_INITIAL_LINK];
 
 const SAMPLE_TOUR_CONFIG: VirtualTourConfig = {
   firstScene: "entrance",
@@ -181,6 +187,21 @@ const SAMPLE_TOUR_CONFIG: VirtualTourConfig = {
 
 export default function DemoPage() {
   const [mode, setMode] = useState<"single" | "tour">("single");
+  const [selectedLink, setSelectedLink] = useState(HOTSPOT_TUNER_INITIAL_LINK);
+  const [uiYaw, setUiYaw] = useState(Math.round(HOTSPOT_TUNER_INITIAL_PLACEMENT?.yaw ?? 0));
+  const [uiTargetYaw, setUiTargetYaw] = useState(
+    Math.round(HOTSPOT_TUNER_INITIAL_PLACEMENT?.targetYaw ?? 0)
+  );
+  const [uiTargetPitch, setUiTargetPitch] = useState(
+    Math.round(HOTSPOT_TUNER_INITIAL_PLACEMENT?.targetPitch ?? 0)
+  );
+
+  const syncTunerFields = (link: string) => {
+    const placement = HOTSPOT_PLACEMENT_OVERRIDES[link];
+    setUiYaw(Math.round(placement?.yaw ?? 0));
+    setUiTargetYaw(Math.round(placement?.targetYaw ?? 0));
+    setUiTargetPitch(Math.round(placement?.targetPitch ?? 0));
+  };
 
   return (
     <main className="min-h-screen bg-[#0a0a0f] text-white">
@@ -229,17 +250,93 @@ export default function DemoPage() {
               : "Clique nos pontos destacados para navegar entre os ambientes."}
           </p>
 
-          <div className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-slate-900/50" key={mode}>
-            {mode === "single" ? (
-              <PanoramaViewer
-                imageUrl={SAMPLE_PANORAMA}
-                height={500}
-                title="Demonstração 360°"
-                author="Imerso"
-                compass
-              />
-            ) : (
-              <VirtualTour config={SAMPLE_TOUR_CONFIG} height={500} />
+          <div className={`grid gap-6 ${mode === "tour" ? "lg:grid-cols-[minmax(0,1fr)_340px]" : "grid-cols-1"}`}>
+            <div
+              className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-slate-900/50"
+              key={mode}
+            >
+              {mode === "single" ? (
+                <PanoramaViewer
+                  imageUrl={SAMPLE_PANORAMA}
+                  height={500}
+                  title="Demonstração 360°"
+                  author="Imerso"
+                  compass
+                />
+              ) : (
+                <VirtualTour config={SAMPLE_TOUR_CONFIG} height={500} />
+              )}
+            </div>
+
+            {mode === "tour" && (
+              <aside className="p-5 rounded-xl bg-slate-900/30 border border-white/10 h-fit lg:sticky lg:top-28">
+                <div className="flex items-center justify-between gap-3 mb-4">
+                  <h2 className="text-lg font-semibold text-primary">Hotspot Tuner</h2>
+                  <span className="text-xs text-[#b0b0d0] bg-white/10 px-2 py-1 rounded">
+                    UI only (no live apply yet)
+                  </span>
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-sm text-[#b0b0d0] mb-2">Link</label>
+                  <select
+                    className="w-full rounded-lg bg-slate-950/60 border border-white/15 px-3 py-2 text-sm"
+                    value={selectedLink}
+                    onChange={(e) => {
+                      const nextLink = e.target.value;
+                      setSelectedLink(nextLink);
+                      syncTunerFields(nextLink);
+                    }}
+                  >
+                    {HOTSPOT_LINK_OPTIONS.map((link) => (
+                      <option key={link} value={link}>
+                        {link}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="grid gap-4">
+                  <label className="block">
+                    <span className="block text-sm text-[#b0b0d0] mb-2">yaw ({uiYaw})</span>
+                    <input
+                      type="range"
+                      min={-180}
+                      max={180}
+                      step={1}
+                      value={uiYaw}
+                      onChange={(e) => setUiYaw(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </label>
+
+                  <label className="block">
+                    <span className="block text-sm text-[#b0b0d0] mb-2">targetYaw ({uiTargetYaw})</span>
+                    <input
+                      type="range"
+                      min={-180}
+                      max={180}
+                      step={1}
+                      value={uiTargetYaw}
+                      onChange={(e) => setUiTargetYaw(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </label>
+
+                  <label className="block">
+                    <span className="block text-sm text-[#b0b0d0] mb-2">targetPitch ({uiTargetPitch})</span>
+                    <input
+                      type="range"
+                      min={-90}
+                      max={90}
+                      step={1}
+                      value={uiTargetPitch}
+                      onChange={(e) => setUiTargetPitch(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </label>
+                </div>
+              </aside>
             )}
           </div>
 
